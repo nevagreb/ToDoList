@@ -14,7 +14,7 @@ struct ToDoItemView: View {
     
     var body: some View {
         HStack(alignment: .top) {
-            Image(note.isSelected ? "checkmarkYellow" : "circle")
+            Image(note.isDone ? "checkmarkYellow" : "circle")
                 .onTapGesture {
                     tapAction()
                 }
@@ -24,23 +24,22 @@ struct ToDoItemView: View {
                     Text(note.title)
                         .font(Font.system(size: 16))
                         .padding(.bottom, 6)
-                        .strikethrough(note.isSelected)
+                        .strikethrough(note.isDone)
                     Text(note.description)
                         .font(Font.system(size: 12))
                         .lineLimit(2)
                         .padding(.bottom, 6)
                 }
-                .opacity(note.isSelected ? 0.5 : 1)
+                .opacity(note.isDone ? 0.5 : 1)
                 
                 Text(note.date.formattedAsShortDate())
                     .font(Font.system(size: 12))
                     .opacity(0.5)
             }
+            Spacer()
         }
+        // используется для того, чтобы сделать всю
+        // область HStack кликабельной
+        .contentShape(Rectangle())
     }
 }
-
-//#Preview {
-//    ToDoItemView(note: Note())
-//        .preferredColorScheme(.dark)
-//}

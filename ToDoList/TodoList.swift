@@ -16,6 +16,18 @@ class ToDoList: ObservableObject {
     // MARK: - Intent(s)
 
     func selectNote(with id: UUID) {
-        notesList.selectNote(with: id)
+        notesList.markNoteAsDone(with: id)
+    }
+    
+    func findIndex(of id: UUID) -> Int? {
+        notesList.findIndex(of: id)
+    }
+    
+    func addNewNote() {
+        notesList.addNote()
+    }
+    
+    func deleteNote(with id: UUID) {
+        notesList.deleteNote(with: id)
     }
 }

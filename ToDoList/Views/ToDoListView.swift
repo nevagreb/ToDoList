@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct ToDoListView: View {
-    @StateObject private var toDoList = ToDoList()
+    @EnvironmentObject var toDoList: ToDoList
+    @EnvironmentObject var router: Router
     @State private var searchText = ""
-    
+
     var body: some View {
-        NavigationStack {
-            listOfNotes
+        listOfNotes
             .navigationTitle("Задачи")
             .safeAreaInset(edge: .bottom) {
-                    bottomBar
-                }
-        }
-        .searchable(text: $searchText, 
-                    placement: .toolbar)
+                bottomBar
+            }
+            .searchable(text: $searchText,
+                        placement: .toolbar)
     }
     
     private var listOfNotes: some View {
@@ -28,6 +27,17 @@ struct ToDoListView: View {
             ForEach(toDoList.notes) { note in
                 ToDoItemView(note: note,
                              tapAction: { selectNote(with: note.id) })
+                .onTapGesture(count: 1) {
+                    router.navigate(to: note)
+                }
+                .contextMenu {
+                    ContexMenuButton(type: .edit,
+                                     action: { router.navigate(to: note) })
+                    ContexMenuButton(type: .share,
+                                     action: {})
+                    ContexMenuButton(type: .delete,
+                                     action: { toDoList.deleteNote(with: note.id) })
+                }
             }
         }
         .listStyle(.plain)
@@ -41,7 +51,6 @@ struct ToDoListView: View {
                 Spacer()
             }
             newNoteButton
-            
         }
         .padding()
         .background(Color.customGray)
@@ -50,9 +59,16 @@ struct ToDoListView: View {
     private var newNoteButton: some View {
         HStack {
             Spacer()
-            Button(action: {}) {
+            Button(action: createNewNote ) {
                 Image("newNote")
             }
+        }
+    }
+    
+    private func createNewNote() {
+        toDoList.addNewNote()
+        if let note = toDoList.notes.last {
+            router.navigate(to: note)
         }
     }
     
@@ -61,7 +77,3 @@ struct ToDoListView: View {
     }
 }
 
-#Preview {
-    ToDoListView()
-        .preferredColorScheme(.dark)
-}
