@@ -42,7 +42,7 @@ struct NoteView: View {
                 Text("Введите текст заметки")
                     .foregroundColor(Color(uiColor: .placeholderText))
             }
-            TextEditor(text: $note.description)
+            TextEditor(text: $note._description ?? "")
                 .opacity(note.description.isEmpty ? 0.1 : 1)
         }
         .font(Font.system(size: 16))
@@ -60,6 +60,14 @@ struct NoteView: View {
     }
     
     private func isNoteEmpty() -> Bool {
-        note.title.isEmpty && note.description.isEmpty
+        note.title.isEmpty //&& note.description?.isEmpty
     }
+}
+
+// используется для использования binding с optinal переменными
+func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
+    Binding(
+        get: { lhs.wrappedValue ?? rhs },
+        set: { lhs.wrappedValue = $0 }
+    )
 }

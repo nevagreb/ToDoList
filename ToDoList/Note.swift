@@ -7,53 +7,66 @@
 
 import Foundation
 
-struct NotesList {
-    var notes: [Note] = []
+struct NotesList: Codable {
+    var todos: [Note] = []
     
-    init() {
-        notes.append(Note(title: "Прочитать книгу",
-                          description: "Составить список необходимых продуктов для ужина. Не забыть проверить, что уже есть в холодильнике.",
-                          date: .now,
-                          isDone: true))
-        notes.append(Note(title: "Прочитать книгу",
-                          description: "Составить список необходимых продуктов для ужина. Не забыть проверить, что уже есть в холодильнике.",
-                          date: .now,
-                          isDone: false))
-        notes.append(Note(title: "Прочитать книгу",
-                          description: "Составить список необходимых продуктов для ужина. Не забыть проверить, что уже есть в холодильнике.",
-                          date: .now,
-                          isDone: false))
+    func findIndex(of id: Int) -> Int? {
+        todos.firstIndex(where: {id == $0.id})
     }
     
-    func findIndex(of id: UUID) -> Int? {
-        notes.firstIndex(where: {id == $0.id})
-    }
-    
-    mutating func markNoteAsDone(with id: UUID) {
+    mutating func markNoteAsDone(with id: Int) {
         if let index = findIndex(of: id) {
-            notes[index].isDone.toggle()
+            todos[index].isDone.toggle()
         }
     }
     
     mutating func addNote() {
-        let newNote = NotesList.Note(title: "",
-                                     description: "",
-                                     date: .now,
-                                     isDone: false)
-        notes.append(newNote)
+        let newNote = NotesList.Note(id: todos.reduce(0) { $0 + $1.id },
+                                     title: "",
+                                     _description: "",
+                                     _date: .now,
+                                     isDone: false,
+                                     userId: 0)
+        todos.append(newNote)
     }
     
-    mutating func deleteNote(with id: UUID) {
+    mutating func deleteNote(with id: Int) {
         if let index = findIndex(of: id) {
-            notes.remove(at: index)
+            todos.remove(at: index)
         }
     }
     
-    struct Note: Identifiable, Hashable {
+    struct Note: Identifiable, Hashable, Codable {
+        var id: Int
         var title: String
-        var description: String
-        var date: Date
+        var _description: String?
+        var _date: Date?
         var isDone: Bool
-        var id: UUID = UUID()
+        var userId: Int
+        
+        var description: String {
+            if let _description = _description {
+                return _description
+            } else {
+                return ""
+            }
+        }
+        var date: Date {
+            if let _date = _date {
+                return _date
+            } else {
+                return .now
+            }
+        }
+        
+        enum CodingKeys: String, CodingKey {
+            case id
+            case title = "todo"
+            case _description
+            case _date
+            case isDone = "completed"
+            case userId
+        }
     }
 }
+

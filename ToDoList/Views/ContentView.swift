@@ -16,11 +16,14 @@ struct ContentView: View {
             ToDoListView()
                 .navigationDestination(for: NotesList.Note.self) { note in
                     if let index = toDoList.findIndex(of: note.id) {
-                        NoteView(note: $toDoList.notesList.notes[index])
+                        NoteView(note: $toDoList.notesList.todos[index])
                     }
                 }
         }
         .environmentObject(router)
         .environmentObject(toDoList)
+        .task {
+            await toDoList.featchData()
+        }
     }
 }

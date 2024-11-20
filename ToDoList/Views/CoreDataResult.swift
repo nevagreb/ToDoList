@@ -8,11 +8,39 @@
 import SwiftUI
 
 struct CoreDataResult: View {
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @FetchRequest(sortDescriptors: []) var students: FetchedResults<NoteEntity>
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            List(students) { l in
+                Text(l.title ?? "No name")
+            }
+            
+            VStack {
+                Spacer()
+                Button("Add") {
+                    let firstNames = ["Ginny", "Harry", "Hermione", "Luna", "Ron"]
+                    let lastNames = ["Granger", "Lovegood", "Potter", "Weasley"]
+                    
+                    let chosenFirstName = firstNames.randomElement()!
+                    let chosenLastName = lastNames.randomElement()!
+                    
+                    let one = NoteEntity(context: managedObjectContext)
+                    one.id = 1
+                    one.title = "One"
+                    one.isDone = false
+                    
+                    let two = NoteEntity(context: managedObjectContext)
+                    two.id = 2
+                    two.title = "Two"
+                    two.isDone = false
+                    
+                    try? managedObjectContext.save()
+                }
+            }
+        }
+        .navigationTitle("LLA")
     }
 }
 
-#Preview {
-    CoreDataResult()
-}

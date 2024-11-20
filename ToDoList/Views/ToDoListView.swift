@@ -13,13 +13,20 @@ struct ToDoListView: View {
     @State private var searchText = ""
 
     var body: some View {
-        listOfNotes
-            .navigationTitle("Задачи")
-            .safeAreaInset(edge: .bottom) {
-                bottomBar
+        VStack {
+            if toDoList.isFetching {
+                ProgressView()
+                Spacer()
+            } else {
+                listOfNotes
             }
-            .searchable(text: $searchText,
-                        placement: .toolbar)
+        }
+        .navigationTitle("Задачи")
+        .safeAreaInset(edge: .bottom) {
+            bottomBar
+        }
+        .searchable(text: $searchText,
+                    placement: .toolbar)
     }
     
     private var listOfNotes: some View {
@@ -67,12 +74,13 @@ struct ToDoListView: View {
     
     private func createNewNote() {
         toDoList.addNewNote()
+        
         if let note = toDoList.notes.last {
             router.navigate(to: note)
         }
     }
     
-    private func selectNote(with id: UUID) {
+    private func selectNote(with id: Int) {
         toDoList.selectNote(with: id)
     }
 }
