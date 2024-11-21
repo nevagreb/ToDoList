@@ -8,23 +8,26 @@
 import SwiftUI
 
 struct ToDoListView: View {
-    @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(sortDescriptors: [SortDescriptor(\.wrappedTitle)])
     var todos: FetchedResults<ToDoNote>
-    
-    //@EnvironmentObject var toDoList: ToDoList
     @EnvironmentObject var router: Router
-
+    @EnvironmentObject private var toDoList: ToDoList
+    @Environment(\.managedObjectContext) var managedObjectContext
     @State private var searchText = ""
 
     var body: some View {
         VStack {
-//            if toDoList.isFetching {
-//                ProgressView()
-//                Spacer()
-//            } else {
+            if toDoList.isFetching {
+                ProgressView()
+                Spacer()
+            } else {
                 listOfNotes
-            //}
+                    .onAppear {
+                        if todos.isEmpty {
+                            addNotesFromServer()
+                        }
+                    }
+            }
         }
         .navigationTitle("Задачи")
         .safeAreaInset(edge: .bottom) {
@@ -32,6 +35,22 @@ struct ToDoListView: View {
         }
         .searchable(text: $searchText,
                     placement: .toolbar)
+        .task {
+            if todos.isEmpty {
+                await toDoList.featchData()
+            }
+        }
+        // TODO: - DELETE
+        .toolbar {
+            ToolbarItem {
+                Button("Delete") {
+                    todos.forEach { note in
+                        managedObjectContext.delete(note)
+                        managedObjectContext.saveContext()
+                    }
+                }
+            }
+        }
     }
     
     private var listOfNotes: some View {
@@ -97,6 +116,13 @@ struct ToDoListView: View {
         withAnimation {
             note.wrappedIsDone.toggle()
             managedObjectContext.saveContext()
+        }
+    }
+    
+    func addNotesFromServer() {
+        toDoList.notesList.todos.forEach {
+            let newNote = ToDoNote(context: managedObjectContext)
+            newNote.addInfo(from: $0)
         }
     }
 }

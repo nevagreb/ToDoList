@@ -45,13 +45,24 @@ extension ToDoNote : Identifiable {
         Int(wrappedUserId)
     }
     
+    // MARK: - Intent(s)
     // функция присваивает нулевые значения объекту
     func createEmptyNote() {
-        self.wrappedTitle = ""
         self.wrappedId = 100
+        self.wrappedTitle = ""
         self.wrappedText = ""
+        self.wrappedDate = .now
         self.wrappedIsDone = false
         self.wrappedUserId = 100
-        self.wrappedDate = .now
+    }
+    
+    func addInfo(from note: NotesList.Note) {
+        self.wrappedId = Int16(note.id)
+        self.wrappedTitle = note.title
+        self.wrappedText = note.description
+        self.wrappedDate = note.date
+        self.wrappedIsDone = note.isDone
+        self.wrappedUserId = Int16(note.userId)
     }
 }
+

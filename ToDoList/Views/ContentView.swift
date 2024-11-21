@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var toDoList = ToDoList()
     @StateObject private var router = Router()
 
     var body: some View {
@@ -17,9 +18,7 @@ struct ContentView: View {
                     NoteView(note: note)
                 }
         }
+        .environmentObject(toDoList)
         .environmentObject(router)
-//        .task {
-//            await toDoList.featchData()
-//        }
     }
 }

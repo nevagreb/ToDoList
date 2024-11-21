@@ -9,32 +9,32 @@ import Foundation
 
 struct NotesList: Codable {
     var todos: [Note] = []
-    
-    func findIndex(of id: Int) -> Int? {
-        todos.firstIndex(where: {id == $0.id})
-    }
-    
-    mutating func markNoteAsDone(with id: Int) {
-        if let index = findIndex(of: id) {
-            todos[index].isDone.toggle()
-        }
-    }
-    
-    mutating func addNote() {
-        let newNote = NotesList.Note(id: todos.reduce(0) { $0 + $1.id },
-                                     title: "",
-                                     _description: "",
-                                     _date: .now,
-                                     isDone: false,
-                                     userId: 0)
-        todos.append(newNote)
-    }
-    
-    mutating func deleteNote(with id: Int) {
-        if let index = findIndex(of: id) {
-            todos.remove(at: index)
-        }
-    }
+//    
+//    func findIndex(of id: Int) -> Int? {
+//        todos.firstIndex(where: {id == $0.id})
+//    }
+//    
+//    mutating func markNoteAsDone(with id: Int) {
+//        if let index = findIndex(of: id) {
+//            todos[index].isDone.toggle()
+//        }
+//    }
+//    
+//    mutating func addNote() {
+//        let newNote = NotesList.Note(id: todos.reduce(0) { $0 + $1.id },
+//                                     title: "",
+//                                     _description: "",
+//                                     _date: .now,
+//                                     isDone: false,
+//                                     userId: 0)
+//        todos.append(newNote)
+//    }
+//    
+//    mutating func deleteNote(with id: Int) {
+//        if let index = findIndex(of: id) {
+//            todos.remove(at: index)
+//        }
+//    }
     
     struct Note: Identifiable, Hashable, Codable {
         var id: Int

@@ -17,51 +17,32 @@ struct NoteView: View {
     @State private var date: Date = .now
 
     var body: some View {
+        ScrollView {
+            noteView
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: backButton)
+        .onAppear(perform: showNote)
+        .onDisappear(perform: saveChanges)
+    }
+    
+    var noteView: some View {
         VStack(alignment: .leading) {
-            TextField("Название заметки", text: $title)
+            TextField("Название заметки", text: $title, axis: .vertical)
                 .font(Font.system(size: 34, weight: .bold))
+                .lineLimit(nil)
                 .padding(.bottom, 8)
             Text(date.formattedAsShortDate())
                 .font(Font.system(size: 12))
                 .opacity(0.5)
                 .padding(.bottom, 8)
-            noteText
+            TextField("Введите текст заметки", text: $text, axis: .vertical)
+                .font(Font.system(size: 16))
+                .lineLimit(nil)
+            Spacer()
         }
         .padding()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: backButton)
-        .onAppear {
-            self.title = note.title
-            self.text = note.text
-            self.date = note.date
-        }
-        .onDisappear {
-            if isNoteEmpty() {
-                delete()
-            } else {
-                edit()
-            }
-            do {
-                try note.managedObjectContext?.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-    
-    // текст эдитор для текста заметки с кастомным плэйсхолдером
-    private var noteText: some View {
-        ZStack (alignment: .topLeading) {
-            if text.isEmpty {
-                Text("Введите текст заметки")
-                    .foregroundColor(Color(uiColor: .placeholderText))
-            }
-            TextEditor(text: $text)
-                .opacity(text.isEmpty ? 0.1 : 1)
-        }
-        .font(Font.system(size: 16))
     }
     
     // кастомная кнопка возвращения назад 
@@ -78,6 +59,21 @@ struct NoteView: View {
     // проверка на пустую заметку для удаления
     private func isNoteEmpty() -> Bool {
         title.isEmpty && text.isEmpty
+    }
+    
+    private func showNote() {
+        self.title = note.title
+        self.text = note.text
+        self.date = note.date
+    }
+    
+    private func saveChanges() {
+        if isNoteEmpty() {
+            delete()
+        } else {
+            edit()
+        }
+        managedObjectContext.saveContext()
     }
     
     // функция удаления заметки
