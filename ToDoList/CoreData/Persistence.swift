@@ -14,29 +14,8 @@ struct PersistenceController {
     // контейнер для Core Data
     let container: NSPersistentContainer
 
-    // конфигурация для превью
-    static var preview: PersistenceController = {
-        let controller = PersistenceController(inMemory: true)
-
-        // тестовые данные
-        var id = 0
-        for _ in 0..<10 {
-            let todo = ToDoNote(context: controller.container.viewContext)
-            todo.title = "Example Language 1"
-            todo.id = Int16(id)
-            id += 1
-        }
-
-        return controller
-    }()
-
-    init(inMemory: Bool = false) {
+    init() {
         container = NSPersistentContainer(name: "ToDoNotes")
-
-        if inMemory {
-            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
-        }
-
         container.loadPersistentStores { description, error in
             if let error = error {
                 fatalError("Error: \(error.localizedDescription)")

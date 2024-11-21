@@ -9,16 +9,19 @@ import SwiftUI
 
 // структура - детальный экран заметки
 struct NoteView: View {
-    @Binding var note: NotesList.Note
+    @ObservedObject var note: ToDoNote
     @EnvironmentObject var router: Router
-    @EnvironmentObject var toDoList: ToDoList
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @State private var title: String = ""
+    @State private var text: String = ""
+    @State private var date: Date = .now
 
     var body: some View {
         VStack(alignment: .leading) {
-            TextField("Название заметки", text: $note.title)
+            TextField("Название заметки", text: $title)
                 .font(Font.system(size: 34, weight: .bold))
                 .padding(.bottom, 8)
-            Text(note.date.formattedAsShortDate())
+            Text(date.formattedAsShortDate())
                 .font(Font.system(size: 12))
                 .opacity(0.5)
                 .padding(.bottom, 8)
@@ -28,9 +31,22 @@ struct NoteView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: backButton)
+        .onAppear {
+            self.title = note.title
+            self.text = note.text
+            self.date = note.date
+        }
         .onDisappear {
             if isNoteEmpty() {
-                toDoList.deleteNote(with: note.id)
+                delete()
+            } else {
+                edit()
+            }
+            do {
+                try note.managedObjectContext?.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
@@ -38,12 +54,12 @@ struct NoteView: View {
     // текст эдитор для текста заметки с кастомным плэйсхолдером
     private var noteText: some View {
         ZStack (alignment: .topLeading) {
-            if note.description.isEmpty {
+            if text.isEmpty {
                 Text("Введите текст заметки")
                     .foregroundColor(Color(uiColor: .placeholderText))
             }
-            TextEditor(text: $note._description ?? "")
-                .opacity(note.description.isEmpty ? 0.1 : 1)
+            TextEditor(text: $text)
+                .opacity(text.isEmpty ? 0.1 : 1)
         }
         .font(Font.system(size: 16))
     }
@@ -59,15 +75,25 @@ struct NoteView: View {
         }
     }
     
+    // проверка на пустую заметку для удаления
     private func isNoteEmpty() -> Bool {
-        note.title.isEmpty //&& note.description?.isEmpty
+        title.isEmpty && text.isEmpty
     }
-}
-
-// используется для использования binding с optinal переменными
-func ??<T>(lhs: Binding<Optional<T>>, rhs: T) -> Binding<T> {
-    Binding(
-        get: { lhs.wrappedValue ?? rhs },
-        set: { lhs.wrappedValue = $0 }
-    )
+    
+    // функция удаления заметки
+    private func delete() {
+        withAnimation {
+            managedObjectContext.delete(note)
+            managedObjectContext.saveContext()
+        }
+    }
+    
+    // функция редактирования заметки
+    private func edit() {
+        withAnimation {
+            note.wrappedTitle = title
+            note.wrappedText = text
+            managedObjectContext.saveContext()
+        }
+    }
 }

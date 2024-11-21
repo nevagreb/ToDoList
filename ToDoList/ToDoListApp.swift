@@ -14,8 +14,8 @@ struct ToDoListApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CoreView()
-            //ContentView()
+            //CoreView()
+            ContentView()
                 .preferredColorScheme(.dark)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }

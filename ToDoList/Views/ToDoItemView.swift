@@ -9,7 +9,7 @@ import SwiftUI
 
 // структура - строка ToDo-листа
 struct ToDoItemView: View {
-    let note: NotesList.Note
+    let note: ToDoNote
     let tapAction: ()->Void
     
     var body: some View {
@@ -25,7 +25,7 @@ struct ToDoItemView: View {
                         .font(Font.system(size: 16))
                         .padding(.bottom, 6)
                         .strikethrough(note.isDone)
-                    Text(note.description)
+                    Text(note.text)
                         .font(Font.system(size: 12))
                         .lineLimit(2)
                         .padding(.bottom, 6)

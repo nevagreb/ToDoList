@@ -8,18 +8,23 @@
 import SwiftUI
 
 struct ToDoListView: View {
-    @EnvironmentObject var toDoList: ToDoList
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.wrappedTitle)])
+    var todos: FetchedResults<ToDoNote>
+    
+    //@EnvironmentObject var toDoList: ToDoList
     @EnvironmentObject var router: Router
+
     @State private var searchText = ""
 
     var body: some View {
         VStack {
-            if toDoList.isFetching {
-                ProgressView()
-                Spacer()
-            } else {
+//            if toDoList.isFetching {
+//                ProgressView()
+//                Spacer()
+//            } else {
                 listOfNotes
-            }
+            //}
         }
         .navigationTitle("Задачи")
         .safeAreaInset(edge: .bottom) {
@@ -31,9 +36,9 @@ struct ToDoListView: View {
     
     private var listOfNotes: some View {
         List {
-            ForEach(toDoList.notes) { note in
+            ForEach(todos) { note in
                 ToDoItemView(note: note,
-                             tapAction: { selectNote(with: note.id) })
+                             tapAction: { select(note: note) })
                 .onTapGesture(count: 1) {
                     router.navigate(to: note)
                 }
@@ -43,7 +48,7 @@ struct ToDoListView: View {
                     ContexMenuButton(type: .share,
                                      action: {})
                     ContexMenuButton(type: .delete,
-                                     action: { toDoList.deleteNote(with: note.id) })
+                                     action: { delete(note: note) })
                 }
             }
         }
@@ -54,7 +59,7 @@ struct ToDoListView: View {
         ZStack {
             HStack {
                 Spacer()
-                Text(toDoList.notes.count.numberToStingInTasks())
+                Text(todos.count.numberToStingInTasks())
                 Spacer()
             }
             newNoteButton
@@ -66,22 +71,33 @@ struct ToDoListView: View {
     private var newNoteButton: some View {
         HStack {
             Spacer()
-            Button(action: createNewNote ) {
+            Button(action: addNote ) {
                 Image("newNote")
             }
         }
     }
     
-    private func createNewNote() {
-        toDoList.addNewNote()
-        
-        if let note = toDoList.notes.last {
-            router.navigate(to: note)
+    private func addNote() {
+        withAnimation {
+            let newNote = ToDoNote(context: managedObjectContext)
+            newNote.createEmptyNote()
+            managedObjectContext.saveContext()
+            router.navigate(to: newNote)
         }
     }
     
-    private func selectNote(with id: Int) {
-        toDoList.selectNote(with: id)
+    private func delete(note: ToDoNote) {
+        withAnimation {
+            managedObjectContext.delete(note)
+            managedObjectContext.saveContext()
+        }
+    }
+    
+    private func select(note: ToDoNote) {
+        withAnimation {
+            note.wrappedIsDone.toggle()
+            managedObjectContext.saveContext()
+        }
     }
 }
 
