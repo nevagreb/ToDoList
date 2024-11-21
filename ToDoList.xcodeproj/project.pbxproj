@@ -85,7 +85,7 @@
 				630223CE2CE7566600D7FE94 /* Note.swift */,
 				630223D42CE7688D00D7FE94 /* TodoList.swift */,
 				63A948A42CEC5BBF00D45F4C /* Views */,
-				630223D02CE7604A00D7FE94 /* Extensions.swift */,
+				63375D792CEFFD4900C013A9 /* Extensions */,
 				630223C22CE74F4600D7FE94 /* Assets.xcassets */,
 				630223C42CE74F4600D7FE94 /* Preview Content */,
 			);
@@ -105,12 +105,20 @@
 			children = (
 				6304E2B22CEEBBC600F9EEC1 /* ToDoNote+CoreDataClass.swift */,
 				6304E2B32CEEBBC600F9EEC1 /* ToDoNote+CoreDataProperties.swift */,
-				63EB3BD62CEF65C500ED0CC9 /* CoreDataExtensions.swift */,
 				6304E2A92CEEB09C00F9EEC1 /* CoreView.swift */,
 				6304E2AB2CEEB24200F9EEC1 /* Persistence.swift */,
 				6304E2A22CEEB02700F9EEC1 /* ToDoNotes.xcdatamodeld */,
 			);
 			path = CoreData;
+			sourceTree = "<group>";
+		};
+		63375D792CEFFD4900C013A9 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				63EB3BD62CEF65C500ED0CC9 /* CoreDataExtensions.swift */,
+				630223D02CE7604A00D7FE94 /* Extensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		63A948A42CEC5BBF00D45F4C /* Views */ = {

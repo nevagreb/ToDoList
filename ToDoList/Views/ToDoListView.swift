@@ -8,12 +8,25 @@
 import SwiftUI
 
 struct ToDoListView: View {
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.wrappedTitle)])
-    var todos: FetchedResults<ToDoNote>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\ToDoNote.wrappedDate, order: .reverse)])
+    private var todos: FetchedResults<ToDoNote>
     @EnvironmentObject var router: Router
     @EnvironmentObject private var toDoList: ToDoList
     @Environment(\.managedObjectContext) var managedObjectContext
     @State private var searchText = ""
+    
+    var query: Binding<String> {
+        Binding {
+            searchText
+        } set: { newValue in
+            let p1 = NSPredicate(format: "wrappedTitle CONTAINS %@", newValue)
+            let p2 = NSPredicate(format: "wrappedText CONTAINS %@", newValue)
+            searchText = newValue
+            todos.nsPredicate = newValue.isEmpty
+            ? nil
+            : NSCompoundPredicate(orPredicateWithSubpredicates: [p1, p2])
+        }
+    }
 
     var body: some View {
         VStack {
@@ -33,7 +46,7 @@ struct ToDoListView: View {
         .safeAreaInset(edge: .bottom) {
             bottomBar
         }
-        .searchable(text: $searchText,
+        .searchable(text: query,
                     placement: .toolbar)
         .task {
             if todos.isEmpty {
@@ -41,16 +54,16 @@ struct ToDoListView: View {
             }
         }
         // TODO: - DELETE
-        .toolbar {
-            ToolbarItem {
-                Button("Delete") {
-                    todos.forEach { note in
-                        managedObjectContext.delete(note)
-                        managedObjectContext.saveContext()
-                    }
-                }
-            }
-        }
+//        .toolbar {
+//            ToolbarItem {
+//                Button("Delete") {
+//                    todos.forEach { note in
+//                        managedObjectContext.delete(note)
+//                        managedObjectContext.saveContext()
+//                    }
+//                }
+//            }
+//        }
     }
     
     private var listOfNotes: some View {

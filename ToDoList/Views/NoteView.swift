@@ -23,6 +23,7 @@ struct NoteView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: backButton)
+        .toolbar { keyboardDoneButton }
         .onAppear(perform: showNote)
         .onDisappear(perform: saveChanges)
     }
@@ -42,6 +43,8 @@ struct NoteView: View {
                 .lineLimit(nil)
             Spacer()
         }
+        .keyboardType(.alphabet)
+        .disableAutocorrection(true)
         .padding()
     }
     
@@ -52,6 +55,18 @@ struct NoteView: View {
                 Image("chevron")
                 Text("Назад")
                     .foregroundStyle(.yellow)
+            }
+        }
+    }
+    
+    // кнопка Done для клавиатуры
+    private var keyboardDoneButton: some ToolbarContent {
+        ToolbarItemGroup(placement: .keyboard) {
+            Spacer()
+            Button(action: { hideKeyboard() }) {
+                Text("Done")
+                    .foregroundColor(Color.yellow)
+                    .font(.body)
             }
         }
     }

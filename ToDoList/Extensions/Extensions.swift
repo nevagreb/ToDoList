@@ -56,3 +56,10 @@ extension Color {
         self.init(red: r, green: g, blue: b)
     }
 }
+
+// функция используется для скрытия клавиатуры
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
