@@ -10,11 +10,14 @@ import SwiftUI
 @main
 struct ToDoListApp: App {
     @Environment(\.scenePhase) var scenePhase
-    
+    let persistenceController = PersistenceController.shared
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CoreView()
+            //ContentView()
                 .preferredColorScheme(.dark)
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
 //        .onChange(of: scenePhase) {
 //              persistenceController.save()
