@@ -13,6 +13,7 @@ struct ToDoListView: View {
     @EnvironmentObject var router: Router
     @EnvironmentObject private var toDoList: ToDoList
     @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.managedObjectContext) var backgroundContext
     @State private var searchText = ""
     
     var query: Binding<String> {
@@ -53,17 +54,6 @@ struct ToDoListView: View {
                 await toDoList.featchData()
             }
         }
-        // TODO: - DELETE
-//        .toolbar {
-//            ToolbarItem {
-//                Button("Delete") {
-//                    todos.forEach { note in
-//                        managedObjectContext.delete(note)
-//                        managedObjectContext.saveContext()
-//                    }
-//                }
-//            }
-//        }
     }
     
     private var listOfNotes: some View {
@@ -113,7 +103,7 @@ struct ToDoListView: View {
         withAnimation {
             let newNote = ToDoNote(context: managedObjectContext)
             newNote.createEmptyNote()
-            managedObjectContext.saveContext()
+            backgroundContext.saveContext()
             router.navigate(to: newNote)
         }
     }
@@ -121,14 +111,14 @@ struct ToDoListView: View {
     private func delete(note: ToDoNote) {
         withAnimation {
             managedObjectContext.delete(note)
-            managedObjectContext.saveContext()
+            backgroundContext.saveContext()
         }
     }
     
     private func select(note: ToDoNote) {
         withAnimation {
             note.wrappedIsDone.toggle()
-            managedObjectContext.saveContext()
+            backgroundContext.saveContext()
         }
     }
     

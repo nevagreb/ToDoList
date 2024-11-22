@@ -16,11 +16,14 @@ struct PersistenceController {
 
     init() {
         container = NSPersistentContainer(name: "ToDoNotes")
-        container.loadPersistentStores { description, error in
+        container.loadPersistentStores { (persistent, error) in
             if let error = error {
-                fatalError("Error: \(error.localizedDescription)")
+                fatalError("Error: " + error.localizedDescription)
             }
         }
+        container.viewContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
+        container.viewContext.shouldDeleteInaccessibleFaults = true
+        container.viewContext.automaticallyMergesChangesFromParent = true
     }
     
     // функция созранения данных 
@@ -35,4 +38,17 @@ struct PersistenceController {
             }
         }
     }
+    
+    func saveChanges(with context: NSManagedObjectContext) {
+            context.performAndWait {
+                if context.hasChanges {
+                    do {
+                        try context.save()
+                    } catch {
+                        context.rollback()
+                    }
+                }
+                context.reset()
+            }
+        }
 }

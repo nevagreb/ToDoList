@@ -18,6 +18,7 @@ struct ToDoListApp: App {
             ContentView()
                 .preferredColorScheme(.dark)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistenceController.container.newBackgroundContext())
         }
         .onChange(of: scenePhase) {
             persistenceController.container.viewContext.saveContext()

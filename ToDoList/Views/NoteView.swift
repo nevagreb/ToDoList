@@ -12,6 +12,7 @@ struct NoteView: View {
     @ObservedObject var note: ToDoNote
     @EnvironmentObject var router: Router
     @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.managedObjectContext) var backgroundContext
     @State private var title: String = ""
     @State private var text: String = ""
     @State private var date: Date = .now
@@ -88,14 +89,14 @@ struct NoteView: View {
         } else {
             edit()
         }
-        managedObjectContext.saveContext()
+        backgroundContext.saveContext()
     }
     
     // функция удаления заметки
     private func delete() {
         withAnimation {
-            managedObjectContext.delete(note)
-            managedObjectContext.saveContext()
+            backgroundContext.delete(note)
+            backgroundContext.saveContext()
         }
     }
     
@@ -104,7 +105,7 @@ struct NoteView: View {
         withAnimation {
             note.wrappedTitle = title
             note.wrappedText = text
-            managedObjectContext.saveContext()
+            backgroundContext.saveContext()
         }
     }
 }
