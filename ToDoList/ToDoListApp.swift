@@ -14,11 +14,12 @@ struct ToDoListApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
                 .preferredColorScheme(.dark)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environment(\.managedObjectContext, persistenceController.container.newBackgroundContext())
         }
+        // сохранение при изменении scenePhase
         .onChange(of: scenePhase) {
             persistenceController.container.viewContext.saveContext()
         }

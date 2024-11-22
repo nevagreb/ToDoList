@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// класс используется для навигации 
 final class Coordinator: ObservableObject {
     @Published var path = NavigationPath() 
     

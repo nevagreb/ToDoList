@@ -11,6 +11,7 @@ import SwiftUI
 struct NoteView: View {
     @ObservedObject var note: ToDoNote
     @EnvironmentObject var router: Coordinator
+    // 2 контекста: 1 - работа с UI, 2 - работа в фоне
     @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.managedObjectContext) var backgroundContext
     @State private var title: String = ""
@@ -29,6 +30,7 @@ struct NoteView: View {
         .onDisappear(perform: saveChanges)
     }
     
+    // задача с тремя полями: заголовок, дата и описание
     var noteView: some View {
         VStack(alignment: .leading) {
             TextField("Название заметки", text: $title, axis: .vertical)
@@ -77,12 +79,14 @@ struct NoteView: View {
         title.isEmpty && text.isEmpty
     }
     
+    // функция для отображения данных заметки на экране
     private func showNote() {
         self.title = note.title
         self.text = note.text
         self.date = note.date
     }
     
+    // функция сохранения измнений
     private func saveChanges() {
         if isNoteEmpty() {
             delete()

@@ -7,6 +7,7 @@
 
 import Foundation
 
+// стуктура - модель данных для работы с сетью
 struct NotesList: Codable {
     var todos: [Note] = []
     

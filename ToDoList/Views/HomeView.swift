@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct ContentView: View {
+// структура - домашний экран
+struct HomeView: View {
     @StateObject private var toDoList = ToDoList()
     @StateObject private var router = Coordinator()
 

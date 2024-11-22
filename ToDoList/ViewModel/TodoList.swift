@@ -7,6 +7,7 @@
 
 import Foundation
 
+// класс - вьюмодель для работы с сетью
 class ToDoList: ObservableObject {
     @Published var notesList = NotesList()
     @Published var isFetching = false

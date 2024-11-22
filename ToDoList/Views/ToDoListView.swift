@@ -7,15 +7,20 @@
 
 import SwiftUI
 
+// структура - экран списка задач
 struct ToDoListView: View {
+    // фетчреквест для CoreData
     @FetchRequest(sortDescriptors: [SortDescriptor(\ToDoNote.wrappedDate, order: .reverse)])
     private var todos: FetchedResults<ToDoNote>
     @EnvironmentObject var router: Coordinator
     @EnvironmentObject private var toDoList: ToDoList
+    // 2 контекста: 1 - работа с UI, 2 - работа в фоне
     @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.managedObjectContext) var backgroundContext
     @State private var searchText = ""
     
+    // свойство используется для поиска по содержимому задачи
+    // и ее описания
     var query: Binding<String> {
         Binding {
             searchText
@@ -56,6 +61,7 @@ struct ToDoListView: View {
         }
     }
     
+    // список задач
     private var listOfNotes: some View {
         List {
             ForEach(todos) { note in
@@ -77,6 +83,7 @@ struct ToDoListView: View {
         .listStyle(.plain)
     }
     
+    // боттомбар с количеством задач
     private var bottomBar: some View {
         ZStack {
             HStack {
@@ -90,6 +97,7 @@ struct ToDoListView: View {
         .background(Color.customGray)
     }
     
+    // кнопка добавления новой задачи
     private var newNoteButton: some View {
         HStack {
             Spacer()
@@ -99,6 +107,7 @@ struct ToDoListView: View {
         }
     }
     
+    // функция добавления новой задачи
     private func addNote() {
         withAnimation {
             let newNote = ToDoNote(context: managedObjectContext)
@@ -108,6 +117,7 @@ struct ToDoListView: View {
         }
     }
     
+    // функция удаления
     private func delete(note: ToDoNote) {
         withAnimation {
             managedObjectContext.delete(note)
@@ -115,6 +125,7 @@ struct ToDoListView: View {
         }
     }
     
+    // функция пометки задачи как выполненной
     private func select(note: ToDoNote) {
         withAnimation {
             note.wrappedIsDone.toggle()
@@ -122,7 +133,8 @@ struct ToDoListView: View {
         }
     }
     
-    func addNotesFromServer() {
+    // функция загрузки задач с сервера
+    private func addNotesFromServer() {
         toDoList.notesList.todos.forEach {
             let newNote = ToDoNote(context: managedObjectContext)
             newNote.addInfo(from: $0)
