@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class Router: ObservableObject {
+final class Coordinator: ObservableObject {
     @Published var path = NavigationPath() 
     
     func navigate<T: Hashable>(to route: T) {

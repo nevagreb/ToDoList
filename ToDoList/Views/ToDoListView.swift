@@ -10,7 +10,7 @@ import SwiftUI
 struct ToDoListView: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\ToDoNote.wrappedDate, order: .reverse)])
     private var todos: FetchedResults<ToDoNote>
-    @EnvironmentObject var router: Router
+    @EnvironmentObject var router: Coordinator
     @EnvironmentObject private var toDoList: ToDoList
     @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.managedObjectContext) var backgroundContext

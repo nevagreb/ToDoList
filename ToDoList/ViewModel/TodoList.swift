@@ -11,27 +11,6 @@ class ToDoList: ObservableObject {
     @Published var notesList = NotesList()
     @Published var isFetching = false
     
-//    var notes: [NotesList.Note] {
-//        notesList.todos
-//    }
-    // MARK: - Intent(s)
-
-//    func selectNote(with id: Int) {
-//        notesList.markNoteAsDone(with: id)
-//    }
-//    
-//    func findIndex(of id: Int) -> Int? {
-//        notesList.findIndex(of: id)
-//    }
-//    
-//    func addNewNote() {
-//        notesList.addNote()
-//    }
-//    
-//    func deleteNote(with id: Int) {
-//        notesList.deleteNote(with: id)
-//    }
-    
     @MainActor
     func featchData() async {
         isFetching = true

@@ -10,7 +10,7 @@ import SwiftUI
 // структура - детальный экран заметки
 struct NoteView: View {
     @ObservedObject var note: ToDoNote
-    @EnvironmentObject var router: Router
+    @EnvironmentObject var router: Coordinator
     @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.managedObjectContext) var backgroundContext
     @State private var title: String = ""

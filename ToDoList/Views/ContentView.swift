@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var toDoList = ToDoList()
-    @StateObject private var router = Router()
+    @StateObject private var router = Coordinator()
 
     var body: some View {
         NavigationStack(path: $router.path) {
